@@ -1,4 +1,5 @@
 defmodule StriveWeb.PlayerResetPasswordLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
   alias Strive.Players

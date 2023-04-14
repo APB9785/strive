@@ -1,8 +1,9 @@
 defmodule StriveWeb.PlayerAuth do
+  @moduledoc false
   use StriveWeb, :verified_routes
 
-  import Plug.Conn
   import Phoenix.Controller
+  import Plug.Conn
 
   alias Strive.Players
 

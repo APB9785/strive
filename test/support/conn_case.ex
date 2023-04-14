@@ -20,14 +20,14 @@ defmodule StriveWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint StriveWeb.Endpoint
-
       use StriveWeb, :verified_routes
 
       # Import conveniences for testing with connections
-      import Plug.Conn
       import Phoenix.ConnTest
+      import Plug.Conn
       import StriveWeb.ConnCase
+
+      @endpoint StriveWeb.Endpoint
     end
   end
 

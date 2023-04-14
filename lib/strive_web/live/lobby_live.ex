@@ -1,4 +1,5 @@
 defmodule StriveWeb.LobbyLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
   alias Strive.Components.GameLength

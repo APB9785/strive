@@ -1,4 +1,5 @@
 defmodule StriveWeb.PlayerConfirmationInstructionsLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
   alias Strive.Players

@@ -1,4 +1,5 @@
 defmodule StriveWeb.PlayerForgotPasswordLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
   alias Strive.Players
@@ -39,8 +40,7 @@ defmodule StriveWeb.PlayerForgotPasswordLive do
       )
     end
 
-    info =
-      "If your email is in our system, you will receive instructions to reset your password shortly."
+    info = "If your email is in our system, you will receive instructions to reset your password shortly."
 
     {:noreply,
      socket

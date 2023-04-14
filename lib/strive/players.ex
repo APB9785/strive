@@ -4,9 +4,11 @@ defmodule Strive.Players do
   """
 
   import Ecto.Query, warn: false
-  alias Strive.Repo
 
-  alias Strive.Players.{Player, PlayerToken, PlayerNotifier}
+  alias Strive.Players.Player
+  alias Strive.Players.PlayerNotifier
+  alias Strive.Players.PlayerToken
+  alias Strive.Repo
 
   ## Database getters
 
@@ -38,8 +40,7 @@ defmodule Strive.Players do
       nil
 
   """
-  def get_player_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
+  def get_player_by_email_and_password(email, password) when is_binary(email) and is_binary(password) do
     player = Repo.get_by(Player, email: email)
     if Player.valid_password?(player, password), do: player
   end

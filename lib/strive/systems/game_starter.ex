@@ -4,12 +4,12 @@ defmodule Strive.Systems.GameStarter do
   """
   use ECSx.System
 
-  alias Strive.Components.GameStartedAt
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
   alias Strive.Components.CurrentSupplies
   alias Strive.Components.GameSize
+  alias Strive.Components.GameStartedAt
   alias Strive.Components.GameWaiting
   alias Strive.Components.HunterCount
   alias Strive.Components.MineCount

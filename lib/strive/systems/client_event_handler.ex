@@ -4,11 +4,11 @@ defmodule Strive.Systems.ClientEventHandler do
   """
   use ECSx.System
 
-  alias Strive.Components.StandardSelection
   alias Strive.Components.GameLength
   alias Strive.Components.GameSize
   alias Strive.Components.GameWaiting
   alias Strive.Components.PlayerJoined
+  alias Strive.Components.StandardSelection
 
   def run do
     client_events = ECSx.ClientEvents.get_and_clear()

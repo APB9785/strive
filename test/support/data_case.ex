@@ -18,12 +18,12 @@ defmodule Strive.DataCase do
 
   using do
     quote do
-      alias Strive.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import Strive.DataCase
+
+      alias Strive.Repo
     end
   end
 

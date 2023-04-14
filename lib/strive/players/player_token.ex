@@ -1,6 +1,9 @@
 defmodule Strive.Players.PlayerToken do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Query
+
   alias Strive.Players.PlayerToken
 
   @hash_algorithm :sha256

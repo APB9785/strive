@@ -1,9 +1,10 @@
 defmodule StriveWeb.PlayerSettingsLiveTest do
   use StriveWeb.ConnCase
 
-  alias Strive.Players
   import Phoenix.LiveViewTest
   import Strive.PlayersFixtures
+
+  alias Strive.Players
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do

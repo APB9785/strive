@@ -56,8 +56,7 @@ defmodule StriveWeb.PlayerSessionControllerTest do
 
     test "login following registration", %{conn: conn, player: player} do
       conn =
-        conn
-        |> post(~p"/players/log_in", %{
+        post(conn, ~p"/players/log_in", %{
           "_action" => "registered",
           "player" => %{
             "email" => player.email,
@@ -71,8 +70,7 @@ defmodule StriveWeb.PlayerSessionControllerTest do
 
     test "login following password update", %{conn: conn, player: player} do
       conn =
-        conn
-        |> post(~p"/players/log_in", %{
+        post(conn, ~p"/players/log_in", %{
           "_action" => "password_updated",
           "player" => %{
             "email" => player.email,

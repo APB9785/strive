@@ -1,4 +1,5 @@
 defmodule Strive.Specials do
+  @moduledoc false
   @data %{
     bribe: %{
       cost: [gold: 1000],

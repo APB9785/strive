@@ -4,12 +4,12 @@ defmodule Strive.Systems.StandardGenerator do
   """
   use ECSx.System
 
-  alias Strive.Components.CurrentGold
-  alias Strive.Components.MineCount
   alias Strive.Components.CurrentFavor
-  alias Strive.Components.CurrentSupplies
+  alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
+  alias Strive.Components.CurrentSupplies
   alias Strive.Components.HunterCount
+  alias Strive.Components.MineCount
   alias Strive.Components.PriestCount
   alias Strive.Components.SoldierCount
 

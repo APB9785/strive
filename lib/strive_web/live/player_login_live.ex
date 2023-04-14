@@ -1,4 +1,5 @@
 defmodule StriveWeb.PlayerLoginLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
   def render(assigns) do

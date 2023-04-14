@@ -1,4 +1,5 @@
 defmodule Strive.Players.PlayerNotifier do
+  @moduledoc false
   import Swoosh.Email
 
   alias Strive.Mailer

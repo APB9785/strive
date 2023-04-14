@@ -4,13 +4,13 @@ defmodule Strive.Systems.Purchaser do
   """
   use ECSx.System
 
-  alias Strive.Components.UnboughtSpecial
-  alias Strive.Components.SpecialSelection
   alias Strive.Components.CurrentGold
   alias Strive.Components.HunterCount
   alias Strive.Components.PriestCount
   alias Strive.Components.SoldierCount
+  alias Strive.Components.SpecialSelection
   alias Strive.Components.StandardSelection
+  alias Strive.Components.UnboughtSpecial
 
   @cost 10
   @special_cost 20

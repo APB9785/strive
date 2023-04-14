@@ -1,10 +1,11 @@
 defmodule StriveWeb.PlayerAuthTest do
   use StriveWeb.ConnCase, async: true
 
+  import Strive.PlayersFixtures
+
   alias Phoenix.LiveView
   alias Strive.Players
   alias StriveWeb.PlayerAuth
-  import Strive.PlayersFixtures
 
   @remember_me_cookie "_strive_web_player_remember_me"
 
@@ -91,8 +92,7 @@ defmodule StriveWeb.PlayerAuthTest do
     end
 
     test "authenticates player from cookies", %{conn: conn, player: player} do
-      logged_in_conn =
-        conn |> fetch_cookies() |> PlayerAuth.log_in_player(player, %{"remember_me" => "true"})
+      logged_in_conn = conn |> fetch_cookies() |> PlayerAuth.log_in_player(player, %{"remember_me" => "true"})
 
       player_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
@@ -122,8 +122,7 @@ defmodule StriveWeb.PlayerAuthTest do
       player_token = Players.generate_player_session_token(player)
       session = conn |> put_session(:player_token, player_token) |> get_session()
 
-      {:cont, updated_socket} =
-        PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
+      {:cont, updated_socket} = PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
 
       assert updated_socket.assigns.current_player.id == player.id
     end
@@ -132,17 +131,15 @@ defmodule StriveWeb.PlayerAuthTest do
       player_token = "invalid_token"
       session = conn |> put_session(:player_token, player_token) |> get_session()
 
-      {:cont, updated_socket} =
-        PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
+      {:cont, updated_socket} = PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
 
       assert updated_socket.assigns.current_player == nil
     end
 
     test "assigns nil to current_player assign if there isn't a player_token", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
-      {:cont, updated_socket} =
-        PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
+      {:cont, updated_socket} = PlayerAuth.on_mount(:mount_current_player, %{}, session, %LiveView.Socket{})
 
       assert updated_socket.assigns.current_player == nil
     end
@@ -153,8 +150,7 @@ defmodule StriveWeb.PlayerAuthTest do
       player_token = Players.generate_player_session_token(player)
       session = conn |> put_session(:player_token, player_token) |> get_session()
 
-      {:cont, updated_socket} =
-        PlayerAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
+      {:cont, updated_socket} = PlayerAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
 
       assert updated_socket.assigns.current_player.id == player.id
     end
@@ -173,7 +169,7 @@ defmodule StriveWeb.PlayerAuthTest do
     end
 
     test "redirects to login page if there isn't a player_token ", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       socket = %LiveView.Socket{
         endpoint: StriveWeb.Endpoint,
@@ -200,7 +196,7 @@ defmodule StriveWeb.PlayerAuthTest do
     end
 
     test "Don't redirect is there is no authenticated player", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       assert {:cont, _updated_socket} =
                PlayerAuth.on_mount(

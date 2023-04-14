@@ -1,6 +1,9 @@
 defmodule Strive.Players.Player do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Changeset
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "players" do
@@ -126,7 +129,7 @@ defmodule Strive.Players.Player do
   Confirms the account by setting `confirmed_at`.
   """
   def confirm_changeset(player) do
-    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    now = NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
     change(player, confirmed_at: now)
   end
 

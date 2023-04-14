@@ -1,18 +1,19 @@
 defmodule StriveWeb.GameLive do
+  @moduledoc false
   use StriveWeb, :live_view
 
-  alias Strive.Components.StandardSelection
-  alias Strive.Components.PlayerJoined
-  alias Strive.Components.PriestCount
-  alias Strive.Components.HunterCount
-  alias Strive.Components.SoldierCount
+  alias Strive.Components.CurrentFavor
+  alias Strive.Components.CurrentGold
+  alias Strive.Components.CurrentMight
+  alias Strive.Components.CurrentSupplies
   alias Strive.Components.GameLength
   alias Strive.Components.GameSize
   alias Strive.Components.GameStartedAt
-  alias Strive.Components.CurrentGold
-  alias Strive.Components.CurrentMight
-  alias Strive.Components.CurrentFavor
-  alias Strive.Components.CurrentSupplies
+  alias Strive.Components.HunterCount
+  alias Strive.Components.PlayerJoined
+  alias Strive.Components.PriestCount
+  alias Strive.Components.SoldierCount
+  alias Strive.Components.StandardSelection
 
   def mount(_params, %{"player_token" => token} = _session, socket) do
     {:ok,
