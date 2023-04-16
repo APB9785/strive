@@ -49,7 +49,7 @@ defmodule StriveWeb.LobbyLive do
   def handle_event("create_game", %{"length" => length, "size" => size}, socket) do
     player = socket.assigns.player_entity
     game_id = Ecto.UUID.generate()
-    length = String.to_integer(length)
+    length = String.to_integer(length) * 60
     size = String.to_integer(size)
     ECSx.ClientEvents.add(player, {:create_new_game, game_id, length, size})
 
@@ -88,7 +88,7 @@ defmodule StriveWeb.LobbyLive do
           phx-click="join_game"
           phx-value-id={game_id}
         >
-          <p>Game Length: <%= time %> minutes</p>
+          <p>Game Length: <%= div(time, 60) %> minutes</p>
           <p>Players: <%= players %>/<%= size %></p>
         </div>
       <% end %>

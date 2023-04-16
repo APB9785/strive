@@ -1,4 +1,4 @@
-defmodule Strive.Components.UnboughtSpecialType do
+defmodule Strive.Components.SpecialType do
   @moduledoc """
   Key:   special entity
   Value: type of special

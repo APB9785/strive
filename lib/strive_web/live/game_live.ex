@@ -2,6 +2,9 @@ defmodule StriveWeb.GameLive do
   @moduledoc false
   use StriveWeb, :live_view
 
+  alias Strive.Components.UnboughtSpecial
+  alias Strive.Components.SecondsRemaining
+  alias Strive.Components.GameFinishedAt
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
@@ -28,11 +31,14 @@ defmodule StriveWeb.GameLive do
        soldier_count: 0,
        hunter_count: 0,
        priest_count: 0,
-       started: false,
+       started_at: nil,
+       finished_at: nil,
        game_id: nil,
        players_joined: 0,
        game_size: 0,
-       game_length: 0
+       game_length: 0,
+       seconds_remaining: nil,
+       specials: []
      )}
   end
 
@@ -64,29 +70,38 @@ defmodule StriveWeb.GameLive do
   end
 
   def handle_info(:refresh, socket) do
+    %{game_id: game, player_entity: player} = socket.assigns
+
     socket =
-      if socket.assigns.started do
-        player = socket.assigns.player_entity
+      case socket.assigns do
+        %{started_at: nil, finished_at: nil} ->
+          # Waiting for the game to start
+          assign(socket,
+            started_at: GameStartedAt.get_one(game),
+            players_joined: length(PlayerJoined.get_all(game)),
+            game_size: GameSize.get_one(game),
+            game_length: GameLength.get_one(game)
+          )
 
-        assign(socket,
-          current_gold: CurrentGold.get_one(player),
-          current_might: CurrentMight.get_one(player),
-          current_supplies: CurrentSupplies.get_one(player),
-          current_favor: CurrentFavor.get_one(player),
-          soldier_count: SoldierCount.get_one(player),
-          hunter_count: HunterCount.get_one(player),
-          priest_count: PriestCount.get_one(player),
-          selector: StandardSelection.get_one(player)
-        )
-      else
-        game_id = socket.assigns.game_id
+        %{finished_at: nil} ->
+          # Game is in progress
+          assign(socket,
+            current_gold: CurrentGold.get_one(player) |> trunc(),
+            current_might: CurrentMight.get_one(player) |> trunc(),
+            current_supplies: CurrentSupplies.get_one(player) |> trunc(),
+            current_favor: CurrentFavor.get_one(player) |> trunc(),
+            soldier_count: SoldierCount.get_one(player),
+            hunter_count: HunterCount.get_one(player),
+            priest_count: PriestCount.get_one(player),
+            selector: StandardSelection.get_one(player),
+            seconds_remaining: SecondsRemaining.get_one(game),
+            finished_at: GameFinishedAt.get_one(game),
+            specials: game |> UnboughtSpecial.get_all() |> Strive.Specials.parse()
+          )
 
-        assign(socket,
-          started: GameStartedAt.exists?(game_id),
-          players_joined: length(PlayerJoined.get_all(game_id)),
-          game_size: GameSize.get_one(game_id),
-          game_length: GameLength.get_one(game_id)
-        )
+        %{} ->
+          # Game has finished
+          socket
       end
 
     {:noreply, socket}
@@ -108,12 +123,21 @@ defmodule StriveWeb.GameLive do
     <.link navigate={~p"/lobby"}>
       Return to Lobby
     </.link>
-    <%= if @started do %>
+    <%= if @started_at do %>
       <div>
-        <p>Player Gold: <%= trunc(@current_gold) %></p>
-        <p>Player Might: <%= trunc(@current_might) %></p>
-        <p>Player Supplies: <%= trunc(@current_supplies) %></p>
-        <p>Player Favor: <%= trunc(@current_favor) %></p>
+        <p>Time Remaining: <%= format_seconds(@seconds_remaining) %></p>
+        <div class="flex">
+          <%= for %{entity: _entity, name: name, description: description} <- @specials do %>
+            <div class={standard_card_class()}>
+              <p><%= name %></p>
+              <p><%= format_description(description) %></p>
+            </div>
+          <% end %>
+        </div>
+        <p>Player Gold: <%= @current_gold %></p>
+        <p>Player Might: <%= @current_might %></p>
+        <p>Player Supplies: <%= @current_supplies %></p>
+        <p>Player Favor: <%= @current_favor %></p>
 
         <div class="flex gap-x-4">
           <div
@@ -151,11 +175,30 @@ defmodule StriveWeb.GameLive do
     <% else %>
       <div>
         <p>Not started yet!</p>
-        <p>Game length: <%= @game_length %> minutes</p>
+        <p>Game length: <%= div(@game_length || 0, 60) %> minutes</p>
         <p>Players joined: <%= @players_joined %>/<%= @game_size %></p>
       </div>
     <% end %>
     """
+  end
+
+  defp format_description(description) do
+    description
+    |> String.split("\n", trim: false)
+    |> Enum.intersperse(Phoenix.HTML.Tag.tag(:br))
+  end
+
+  defp format_seconds(nil), do: ""
+
+  defp format_seconds(seconds) do
+    mm = seconds |> div(60) |> Integer.to_string() |> String.pad_leading(2, "0")
+    ss = seconds |> rem(60) |> Integer.to_string() |> String.pad_leading(2, "0")
+
+    [mm, ":", ss]
+  end
+
+  defp standard_card_class do
+    "cursor-pointer border border-black rounded-xl p-2"
   end
 
   defp standard_card_class(selector, type) do

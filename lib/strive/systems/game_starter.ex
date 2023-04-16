@@ -4,6 +4,8 @@ defmodule Strive.Systems.GameStarter do
   """
   use ECSx.System
 
+  alias Strive.Components.SpecialType
+  alias Strive.Components.UnboughtSpecial
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
@@ -35,6 +37,7 @@ defmodule Strive.Systems.GameStarter do
     GameStartedAt.add(game, DateTime.utc_now())
     GameWaiting.remove(game)
     Enum.each(players, &init_player/1)
+    add_specials(game)
   end
 
   defp init_player(player) do
@@ -46,5 +49,14 @@ defmodule Strive.Systems.GameStarter do
     SoldierCount.add(player, 0)
     HunterCount.add(player, 0)
     PriestCount.add(player, 0)
+  end
+
+  defp add_specials(game) do
+    for _ <- 1..6 do
+      {type, _} = Enum.random(Strive.Specials.data())
+      special_entity = Ecto.UUID.generate()
+      UnboughtSpecial.add(game, special_entity)
+      SpecialType.add(special_entity, type)
+    end
   end
 end

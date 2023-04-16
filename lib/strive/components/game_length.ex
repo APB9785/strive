@@ -1,6 +1,6 @@
 defmodule Strive.Components.GameLength do
   @moduledoc """
-  Documentation for GameLength components.
+  Measured in seconds.
   """
   use ECSx.Component,
     value: :integer,

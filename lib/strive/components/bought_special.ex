@@ -1,8 +1,9 @@
 defmodule Strive.Components.BoughtSpecial do
   @moduledoc """
-  Documentation for BoughtSpecial components.
+  Key:   player entity
+  Value: special entity
   """
   use ECSx.Component,
     value: :atom,
-    unique: true
+    unique: false
 end

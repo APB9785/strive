@@ -4,6 +4,7 @@ defmodule Strive.Systems.ClientEventHandler do
   """
   use ECSx.System
 
+  alias Strive.Components.GameStartedAt
   alias Strive.Components.GameLength
   alias Strive.Components.GameSize
   alias Strive.Components.GameWaiting
@@ -35,7 +36,9 @@ defmodule Strive.Systems.ClientEventHandler do
   end
 
   defp process_one({player, {:left_game, game}}) do
-    PlayerJoined.remove_one(game, player)
+    if is_nil(GameStartedAt.get_one(game)) do
+      PlayerJoined.remove_one(game, player)
+    end
 
     if PlayerJoined.get_all(game) == [] do
       GameWaiting.remove(game)

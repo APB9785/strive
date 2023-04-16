@@ -5,5 +5,5 @@ defmodule Strive.Components.UnboughtSpecial do
   """
   use ECSx.Component,
     value: :binary,
-    unique: true
+    unique: false
 end

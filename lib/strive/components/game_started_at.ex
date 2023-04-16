@@ -1,6 +1,6 @@
 defmodule Strive.Components.GameStartedAt do
   @moduledoc """
-  Documentation for Game components.
+  Documentation for GameStartedAt components.
   """
   use ECSx.Component,
     value: :datetime,

@@ -11,7 +11,8 @@ defmodule Strive.Manager do
   # Declare all valid Component types
   def components do
     [
-      Strive.Components.StartedAt,
+      Strive.Components.GameFinishedAt,
+      Strive.Components.GameStartedAt,
       Strive.Components.SecondsRemaining,
       Strive.Components.GameLength,
       Strive.Components.GameSize,
@@ -21,8 +22,7 @@ defmodule Strive.Manager do
       Strive.Components.CurrentGold,
       Strive.Components.SpecialSelection,
       Strive.Components.StandardSelection,
-      Strive.Components.UnboughtSpecialType,
-      Strive.Components.GameStarted,
+      Strive.Components.SpecialType,
       Strive.Components.CurrentFavor,
       Strive.Components.CurrentSupplies,
       Strive.Components.CurrentMight,
@@ -37,6 +37,8 @@ defmodule Strive.Manager do
   # Declare all Systems to run
   def systems do
     [
+      Strive.Systems.TimerDecrementer,
+      Strive.Systems.GameEnder,
       Strive.Systems.GameStarter,
       Strive.Systems.ClientEventHandler,
       Strive.Systems.Purchaser,
