@@ -5,7 +5,7 @@ defmodule Strive.Systems.TimerDecrementer do
   alias Strive.Components.GameLength
   alias Strive.Components.GameStartedAt
   alias Strive.Components.SecondsRemaining
-  use ECSx.System
+  @behaviour ECSx.System
 
   def run do
     for {game, started_at} <- GameStartedAt.get_all() do

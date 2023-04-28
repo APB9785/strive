@@ -37,10 +37,15 @@ defmodule StriveWeb.Router do
     # as long as you are also using SSL (which you should anyway).
     import Phoenix.LiveDashboard.Router
 
-    scope "/dev" do
+    scope "/" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: StriveWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: StriveWeb.Telemetry,
+        additional_pages: [
+          ecsx: ECSx.LiveDashboard.Page
+        ]
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

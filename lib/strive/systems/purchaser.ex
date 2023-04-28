@@ -2,7 +2,7 @@ defmodule Strive.Systems.Purchaser do
   @moduledoc """
   Documentation for Purchaser system.
   """
-  use ECSx.System
+  @behaviour ECSx.System
 
   alias Strive.Components.CurrentGold
   alias Strive.Components.HunterCount

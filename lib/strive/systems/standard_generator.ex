@@ -2,7 +2,7 @@ defmodule Strive.Systems.StandardGenerator do
   @moduledoc """
   Documentation for StandardGenerator system.
   """
-  use ECSx.System
+  @behaviour ECSx.System
 
   alias Strive.Components.GameFinishedAt
   alias Strive.Components.PlayerJoined

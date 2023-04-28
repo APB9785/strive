@@ -2,7 +2,7 @@ defmodule Strive.Systems.ClientEventHandler do
   @moduledoc """
   Documentation for ClientEventHandler system.
   """
-  use ECSx.System
+  @behaviour ECSx.System
 
   alias Strive.Components.GameStartedAt
   alias Strive.Components.GameLength

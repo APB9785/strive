@@ -2,7 +2,7 @@ defmodule Strive.Systems.GameStarter do
   @moduledoc """
   Documentation for GameStarter system.
   """
-  use ECSx.System
+  @behaviour ECSx.System
 
   alias Strive.Components.SpecialType
   alias Strive.Components.UnboughtSpecial

@@ -2,7 +2,7 @@ defmodule Strive.Systems.GameEnder do
   @moduledoc """
   Documentation for GameEnder system.
   """
-  use ECSx.System
+  @behaviour ECSx.System
 
   alias Strive.Components.GameFinishedAt
   alias Strive.Components.GameLength
