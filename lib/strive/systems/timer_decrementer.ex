@@ -2,10 +2,11 @@ defmodule Strive.Systems.TimerDecrementer do
   @moduledoc """
   Documentation for TimerDecrementer system.
   """
+  @behaviour ECSx.System
+
   alias Strive.Components.GameLength
   alias Strive.Components.GameStartedAt
   alias Strive.Components.SecondsRemaining
-  @behaviour ECSx.System
 
   def run do
     for {game, started_at} <- GameStartedAt.get_all() do

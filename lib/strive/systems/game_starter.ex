@@ -4,8 +4,6 @@ defmodule Strive.Systems.GameStarter do
   """
   @behaviour ECSx.System
 
-  alias Strive.Components.SpecialType
-  alias Strive.Components.UnboughtSpecial
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
@@ -18,6 +16,8 @@ defmodule Strive.Systems.GameStarter do
   alias Strive.Components.PlayerJoined
   alias Strive.Components.PriestCount
   alias Strive.Components.SoldierCount
+  alias Strive.Components.SpecialType
+  alias Strive.Components.UnboughtSpecial
 
   def run do
     game_waiting_ids = GameWaiting.get_all()

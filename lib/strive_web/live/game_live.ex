@@ -2,21 +2,21 @@ defmodule StriveWeb.GameLive do
   @moduledoc false
   use StriveWeb, :live_view
 
-  alias Strive.Components.UnboughtSpecial
-  alias Strive.Components.SecondsRemaining
-  alias Strive.Components.GameFinishedAt
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
   alias Strive.Components.CurrentSupplies
+  alias Strive.Components.GameFinishedAt
   alias Strive.Components.GameLength
   alias Strive.Components.GameSize
   alias Strive.Components.GameStartedAt
   alias Strive.Components.HunterCount
   alias Strive.Components.PlayerJoined
   alias Strive.Components.PriestCount
+  alias Strive.Components.SecondsRemaining
   alias Strive.Components.SoldierCount
   alias Strive.Components.StandardSelection
+  alias Strive.Components.UnboughtSpecial
 
   def mount(_params, %{"player_token" => token} = _session, socket) do
     {:ok,
@@ -86,10 +86,10 @@ defmodule StriveWeb.GameLive do
         %{finished_at: nil} ->
           # Game is in progress
           assign(socket,
-            current_gold: CurrentGold.get_one(player) |> trunc(),
-            current_might: CurrentMight.get_one(player) |> trunc(),
-            current_supplies: CurrentSupplies.get_one(player) |> trunc(),
-            current_favor: CurrentFavor.get_one(player) |> trunc(),
+            current_gold: player |> CurrentGold.get_one() |> trunc(),
+            current_might: player |> CurrentMight.get_one() |> trunc(),
+            current_supplies: player |> CurrentSupplies.get_one() |> trunc(),
+            current_favor: player |> CurrentFavor.get_one() |> trunc(),
             soldier_count: SoldierCount.get_one(player),
             hunter_count: HunterCount.get_one(player),
             priest_count: PriestCount.get_one(player),

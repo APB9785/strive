@@ -4,9 +4,9 @@ defmodule Strive.Systems.ClientEventHandler do
   """
   @behaviour ECSx.System
 
-  alias Strive.Components.GameStartedAt
   alias Strive.Components.GameLength
   alias Strive.Components.GameSize
+  alias Strive.Components.GameStartedAt
   alias Strive.Components.GameWaiting
   alias Strive.Components.PlayerJoined
   alias Strive.Components.StandardSelection

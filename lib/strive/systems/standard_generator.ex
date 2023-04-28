@@ -4,14 +4,14 @@ defmodule Strive.Systems.StandardGenerator do
   """
   @behaviour ECSx.System
 
-  alias Strive.Components.GameFinishedAt
-  alias Strive.Components.PlayerJoined
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
   alias Strive.Components.CurrentSupplies
+  alias Strive.Components.GameFinishedAt
   alias Strive.Components.HunterCount
   alias Strive.Components.MineCount
+  alias Strive.Components.PlayerJoined
   alias Strive.Components.PriestCount
   alias Strive.Components.SoldierCount
 
