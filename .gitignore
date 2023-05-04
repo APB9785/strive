@@ -35,3 +35,4 @@ strive-*.tar
 npm-debug.log
 /assets/node_modules/
 
+components.persistence

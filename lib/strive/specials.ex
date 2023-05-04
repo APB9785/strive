@@ -1,11 +1,12 @@
 defmodule Strive.Specials do
   @moduledoc false
   alias Strive.Components.SpecialType
+  alias Strive.Components.UnboughtSpecial
 
   @data %{
     bribe: %{
       name: "Bribe",
-      cost: [gold: 1000],
+      costs: [gold: 1000],
       vp_reward: 1,
       effects: [favor: -500],
       description: """
@@ -16,16 +17,16 @@ defmodule Strive.Specials do
     },
     mercenary: %{
       name: "Mercenary",
-      cost: [gold: 100],
+      costs: [gold: 10],
       effects: [might: +500],
       description: """
-      Cost: 100 gold
+      Cost: 10 gold
       +500 Might
       """
     },
     cartography: %{
       name: "Cartography",
-      cost: [gold: 100],
+      costs: [gold: 100],
       effects: [supplies_rate: +1],
       description: """
       Cost: 100 gold
@@ -36,7 +37,7 @@ defmodule Strive.Specials do
     },
     prophet: %{
       name: "Prophet",
-      cost: [gold: 100],
+      costs: [gold: 100],
       effects: [favor_rate: +1],
       description: """
       Cost: 100 gold
@@ -47,7 +48,7 @@ defmodule Strive.Specials do
     },
     raid: %{
       name: "Raid",
-      cost: [supplies: 500, might: 1000],
+      costs: [supplies: 500, might: 1000],
       effects: [favor: -500],
       attack: [gold: {10, :percent}],
       description: """
@@ -60,7 +61,7 @@ defmodule Strive.Specials do
     },
     blessing: %{
       name: "Blessing",
-      cost: [gold: 50, supplies: 500],
+      costs: [gold: 50, supplies: 500],
       vp_reward: {1, per: :favor},
       description: """
       Cost: 50 gold
@@ -70,16 +71,16 @@ defmodule Strive.Specials do
     },
     mine: %{
       name: "Mine",
-      cost: [gold: 100],
+      costs: [gold: 10],
       effects: [gold_rate: +1],
       description: """
-      Cost: 100 gold
+      Cost: 10 gold
       +1 Gold per second
       """
     },
     blacksmith: %{
       name: "Blacksmith",
-      cost: [gold: 200],
+      costs: [gold: 200],
       effects: [might_rate: +1, supplies_rate: +1],
       description: """
       Cost: 200 gold
@@ -91,7 +92,7 @@ defmodule Strive.Specials do
     },
     high_priest: %{
       name: "High Priest",
-      cost: [gold: 100],
+      costs: [gold: 100],
       requirements: [favor: 1000],
       effects: [favor: {20, :per_second}],
       description: """
@@ -102,7 +103,13 @@ defmodule Strive.Specials do
     }
   }
 
-  def data, do: @data
+  def types, do: Map.keys(@data)
+
+  def costs(type), do: @data[type][:costs] || []
+
+  def requirements(type), do: @data[type][:requirements] || []
+
+  def effects(type), do: @data[type][:effects] || []
 
   def parse(specials) when is_list(specials) do
     for special <- specials do
@@ -114,5 +121,12 @@ defmodule Strive.Specials do
         description: @data[type][:description]
       }
     end
+  end
+
+  def generate_new(game) do
+    type = Enum.random(types())
+    special_entity = Ecto.UUID.generate()
+    UnboughtSpecial.add(game, special_entity)
+    SpecialType.add(special_entity, type)
   end
 end

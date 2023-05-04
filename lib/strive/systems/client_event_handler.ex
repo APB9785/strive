@@ -9,6 +9,7 @@ defmodule Strive.Systems.ClientEventHandler do
   alias Strive.Components.GameStartedAt
   alias Strive.Components.GameWaiting
   alias Strive.Components.PlayerJoined
+  alias Strive.Components.SpecialSelection
   alias Strive.Components.StandardSelection
 
   def run do
@@ -19,10 +20,18 @@ defmodule Strive.Systems.ClientEventHandler do
 
   defp process_one({player, :deselect}) do
     StandardSelection.remove(player)
+    SpecialSelection.remove(player)
   end
 
   defp process_one({player, {:select, selection}}) when is_atom(selection) do
+    SpecialSelection.remove(player)
     StandardSelection.add(player, selection)
+  end
+
+  defp process_one({player, {:select, selection}}) when is_binary(selection) do
+    IO.inspect(selection)
+    StandardSelection.remove(player)
+    SpecialSelection.add(player, selection)
   end
 
   defp process_one({_player, {:create_new_game, id, length, size}}) do

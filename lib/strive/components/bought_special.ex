@@ -4,6 +4,6 @@ defmodule Strive.Components.BoughtSpecial do
   Value: special entity
   """
   use ECSx.Component,
-    value: :atom,
+    value: :binary,
     unique: false
 end

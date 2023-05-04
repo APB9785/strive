@@ -8,16 +8,20 @@ defmodule Strive.Systems.GameStarter do
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
   alias Strive.Components.CurrentSupplies
+  alias Strive.Components.FavorRate
+  alias Strive.Components.GameLength
   alias Strive.Components.GameSize
   alias Strive.Components.GameStartedAt
   alias Strive.Components.GameWaiting
+  alias Strive.Components.GoldRate
   alias Strive.Components.HunterCount
+  alias Strive.Components.MightRate
   alias Strive.Components.MineCount
   alias Strive.Components.PlayerJoined
   alias Strive.Components.PriestCount
+  alias Strive.Components.SecondsRemaining
   alias Strive.Components.SoldierCount
-  alias Strive.Components.SpecialType
-  alias Strive.Components.UnboughtSpecial
+  alias Strive.Components.SuppliesRate
 
   def run do
     game_waiting_ids = GameWaiting.get_all()
@@ -26,7 +30,7 @@ defmodule Strive.Systems.GameStarter do
   end
 
   defp maybe_start(game) do
-    with size when not is_nil(size) <- GameSize.get_one(game),
+    with size when not is_nil(size) <- GameSize.get_one(game, nil),
          players_joined when not is_nil(players_joined) <- PlayerJoined.get_all(game),
          true <- size == length(players_joined) do
       start(game, players_joined)
@@ -36,8 +40,13 @@ defmodule Strive.Systems.GameStarter do
   defp start(game, players) do
     GameStartedAt.add(game, DateTime.utc_now())
     GameWaiting.remove(game)
+
+    length = GameLength.get_one(game)
+    SecondsRemaining.add(game, length)
+
     Enum.each(players, &init_player/1)
-    add_specials(game)
+
+    for _ <- 1..6, do: Strive.Specials.generate_new(game)
   end
 
   defp init_player(player) do
@@ -49,14 +58,9 @@ defmodule Strive.Systems.GameStarter do
     SoldierCount.add(player, 0)
     HunterCount.add(player, 0)
     PriestCount.add(player, 0)
-  end
-
-  defp add_specials(game) do
-    for _ <- 1..6 do
-      {type, _} = Enum.random(Strive.Specials.data())
-      special_entity = Ecto.UUID.generate()
-      UnboughtSpecial.add(game, special_entity)
-      SpecialType.add(special_entity, type)
-    end
+    MightRate.add(player, 1)
+    FavorRate.add(player, 1)
+    GoldRate.add(player, 1)
+    SuppliesRate.add(player, 1)
   end
 end

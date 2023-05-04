@@ -2,6 +2,7 @@ defmodule StriveWeb.GameLive do
   @moduledoc false
   use StriveWeb, :live_view
 
+  alias Strive.Components.BoughtSpecial
   alias Strive.Components.CurrentFavor
   alias Strive.Components.CurrentGold
   alias Strive.Components.CurrentMight
@@ -15,8 +16,11 @@ defmodule StriveWeb.GameLive do
   alias Strive.Components.PriestCount
   alias Strive.Components.SecondsRemaining
   alias Strive.Components.SoldierCount
+  alias Strive.Components.SpecialSelection
   alias Strive.Components.StandardSelection
   alias Strive.Components.UnboughtSpecial
+
+  require Logger
 
   def mount(_params, %{"player_token" => token} = _session, socket) do
     {:ok,
@@ -38,13 +42,14 @@ defmodule StriveWeb.GameLive do
        game_size: 0,
        game_length: 0,
        seconds_remaining: nil,
-       specials: []
+       unbought_specials: [],
+       player_specials: []
      )}
   end
 
   def unmount(metadata) do
-    IO.inspect("unmounting!")
     %{player: player, game: game} = metadata
+    IO.inspect("Unmounting player #{player}")
     ECSx.ClientEvents.add(player, {:left_game, game})
   end
 
@@ -60,12 +65,14 @@ defmodule StriveWeb.GameLive do
         %{id: nil}
       end
 
+    Logger.info("Mounting #{game_id} for player #{player.id}")
+
     {:noreply,
      assign(socket,
        player_entity: player.id,
        game_id: game_id,
-       game_size: GameSize.get_one(game_id),
-       game_length: GameLength.get_one(game_id)
+       game_size: GameSize.get_one(game_id, nil),
+       game_length: GameLength.get_one(game_id, nil)
      )}
   end
 
@@ -77,10 +84,10 @@ defmodule StriveWeb.GameLive do
         %{started_at: nil, finished_at: nil} ->
           # Waiting for the game to start
           assign(socket,
-            started_at: GameStartedAt.get_one(game),
+            started_at: GameStartedAt.get_one(game, nil),
             players_joined: length(PlayerJoined.get_all(game)),
-            game_size: GameSize.get_one(game),
-            game_length: GameLength.get_one(game)
+            game_size: GameSize.get_one(game, nil),
+            game_length: GameLength.get_one(game, nil)
           )
 
         %{finished_at: nil} ->
@@ -93,10 +100,11 @@ defmodule StriveWeb.GameLive do
             soldier_count: SoldierCount.get_one(player),
             hunter_count: HunterCount.get_one(player),
             priest_count: PriestCount.get_one(player),
-            selector: StandardSelection.get_one(player),
+            selector: StandardSelection.get_one(player, nil) || SpecialSelection.get_one(player, nil),
             seconds_remaining: SecondsRemaining.get_one(game),
-            finished_at: GameFinishedAt.get_one(game),
-            specials: game |> UnboughtSpecial.get_all() |> Strive.Specials.parse()
+            finished_at: GameFinishedAt.get_one(game, nil),
+            unbought_specials: game |> UnboughtSpecial.get_all() |> Strive.Specials.parse(),
+            player_specials: player |> BoughtSpecial.get_all() |> Strive.Specials.parse()
           )
 
         %{} ->
@@ -118,6 +126,18 @@ defmodule StriveWeb.GameLive do
     {:noreply, socket}
   end
 
+  def handle_event("select_special", %{"selection" => new_selection}, socket) do
+    %{selector: current_selection, player_entity: player} = socket.assigns
+
+    if current_selection == new_selection do
+      ECSx.ClientEvents.add(player, :deselect)
+    else
+      ECSx.ClientEvents.add(player, {:select, new_selection})
+    end
+
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <.link navigate={~p"/lobby"}>
@@ -126,20 +146,26 @@ defmodule StriveWeb.GameLive do
     <%= if @started_at do %>
       <div>
         <p>Time Remaining: <%= format_seconds(@seconds_remaining) %></p>
-        <div class="flex">
-          <%= for %{entity: _entity, name: name, description: description} <- @specials do %>
-            <div class={standard_card_class()}>
+        <div id="unbought-specials" class="flex">
+          <%= for %{entity: entity, name: name, description: description} <- @unbought_specials do %>
+            <div
+              class={standard_card_class(@selector, entity)}
+              phx-click="select_special"
+              phx-value-selection={entity}
+            >
               <p><%= name %></p>
               <p><%= format_description(description) %></p>
             </div>
           <% end %>
         </div>
-        <p>Player Gold: <%= @current_gold %></p>
-        <p>Player Might: <%= @current_might %></p>
-        <p>Player Supplies: <%= @current_supplies %></p>
-        <p>Player Favor: <%= @current_favor %></p>
+        <div id="player-stats">
+          <p>Player Gold: <%= @current_gold %></p>
+          <p>Player Might: <%= @current_might %></p>
+          <p>Player Supplies: <%= @current_supplies %></p>
+          <p>Player Favor: <%= @current_favor %></p>
+        </div>
 
-        <div class="flex gap-x-4">
+        <div id="standards" class="flex gap-x-4">
           <div
             phx-click="select"
             phx-value-selection="soldier"
@@ -170,6 +196,15 @@ defmodule StriveWeb.GameLive do
             <p>Cost: 10 gold</p>
             <p>You have: <%= @priest_count %></p>
           </div>
+        </div>
+
+        <div id="player-specials" class="flex">
+          <%= for %{entity: _entity, name: name, description: description} <- @player_specials do %>
+            <div class={standard_card_class()}>
+              <p><%= name %></p>
+              <p><%= format_description(description) %></p>
+            </div>
+          <% end %>
         </div>
       </div>
     <% else %>

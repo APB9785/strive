@@ -51,7 +51,7 @@ defmodule Strive.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:ecsx, path: "../ecsx"},
+      {:ecsx, path: "../ecsx", override: true},
       {:ecsx_live_dashboard, path: "../ecsx_live_dashboard"},
       {:styler, "~> 0.5", only: [:dev, :test], runtime: false}
     ]

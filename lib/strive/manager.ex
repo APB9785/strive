@@ -4,13 +4,18 @@ defmodule Strive.Manager do
   """
   use ECSx.Manager
 
-  setup do
+  def setup do
     # Load your initial components
   end
 
   # Declare all valid Component types
   def components do
     [
+      Strive.Components.GoldRate,
+      Strive.Components.SuppliesRate,
+      Strive.Components.FavorRate,
+      Strive.Components.MightRate,
+      Strive.Components.SpecialActivated,
       Strive.Components.GameFinishedAt,
       Strive.Components.GameStartedAt,
       Strive.Components.SecondsRemaining,

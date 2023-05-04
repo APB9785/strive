@@ -18,7 +18,7 @@ defmodule Strive.Systems.TimerDecrementer do
       length = GameLength.get_one(game)
       remaining = max(length - elapsed, 0)
 
-      SecondsRemaining.add(game, remaining)
+      SecondsRemaining.update(game, remaining)
     end
 
     :ok

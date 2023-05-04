@@ -7,6 +7,8 @@ defmodule StriveWeb.LobbyLive do
   alias Strive.Components.GameWaiting
   alias Strive.Components.PlayerJoined
 
+  require Logger
+
   @form_defaults %{"length" => 5, "size" => 4}
 
   def mount(_params, %{"player_token" => token} = _session, socket) do
@@ -17,7 +19,11 @@ defmodule StriveWeb.LobbyLive do
       |> assign(player_entity: player.id, form: @form_defaults)
       |> assign_games_waiting()
 
-    :timer.send_interval(250, :refresh)
+    if connected?(socket) do
+      :timer.send_interval(250, :refresh)
+    end
+
+    Logger.info("Mounting lobby for player #{player.id}")
 
     {:ok, socket}
   end
